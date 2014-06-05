@@ -241,6 +241,7 @@ class plgSystemCaslogin extends JPlugin
 								));
 							}
 							$xpath = new DOMXPath($dom);
+							$xpath->registerNamespace('cas', 'http://www.yale.edu/tp/cas');
 							$success = $xpath->query('/cas:serviceResponse/cas:authenticationSuccess[1]');
 							if ($success && $success->length == 1)
 							{
@@ -614,7 +615,9 @@ class plgSystemCaslogin extends JPlugin
 		$port = (int) $params->get('port');
 
 		// Return the server URL
-		return 'https://' . $url . ($port && $port != 443 ? (':' . $port) : '') . ($dir ? ('/' . $dir) : '');
+		//HACK by Mattias AAslund 2014-02-11. We dont support https, so disable for now!
+		//return 'https://' . $url . ($port && $port != 443 ? (':' . $port) : '') . ($dir ? ('/' . $dir) : '');
+		return 'http://' . $url . ($port && $port != 443 ? (':' . $port) : '') . ($dir ? ('/' . $dir) : '');
 	}
 
 	/**
@@ -671,7 +674,9 @@ class plgSystemCaslogin extends JPlugin
 			$params = new JRegistry($server->params);
 
 			// Logout from CAS
-			if ($params->get('autologin') && $my->get('id') == $user['id'])
+			//HACK by Mattias AAslund 2014-02-11. WE always want to logout from CAS, but autologin is pretty awful!
+			$autologout = 1;//$params->get('autologin');
+			if ($autologout && $my->get('id') == $user['id'])
 			{
 				// Log message
 				if ($params->get('log_logout', 0))
